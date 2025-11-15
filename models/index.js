@@ -20,6 +20,7 @@ Post.belongsTo(User, {
 Category.hasMany(Post, {
   foreignKey: "category_id",
   as: "posts",
+  onDelete: "SET NULL"
 });
 
 // post belongs to category
