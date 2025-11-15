@@ -1,79 +1,23 @@
 [
   {
-    "id": 1,
     "title": "My First Blog Post",
     "content": "This is the content of my first post.",
-    "userId": 1,
-    "categoryId": 2,
-    "created_at": "2025-11-15T14:32:00.000Z",
-    "updated_at": "2025-11-15T14:32:00.000Z",
-    "user": { "id": 1, "username": "john_doe", "email": "john@example.com" },
-    "category": { "id": 1, "category_name": "General" }
+    "postedBy": "John Doe", 
+    "category_name": "Artificial Intelligence",
+    "createdOn": "2025-11-15 23:00:48"
   },
   {
-    "id": 2,
     "title": "The Rise of AI in Web Development",
     "content": "AI is transforming how we build websites, making development faster and smarter.",
-    "userId": 1,
-    "categoryId": 2,
-    "created_at": "2025-11-15T14:32:00.000Z",
-    "updated_at": "2025-11-15T14:32:00.000Z",
-    "user": { "id": 1, "username": "john_doe", "email": "john@example.com" },
-    "category": { "id": 3, "category_name": "Artificial Intelligence" }
+    "postedBy": "Jane Smith", 
+    "category_name": "Programming Languages",
+    "createdOn": "2025-11-15 23:00:48"
   },
-  {
-    "id": 3,
-    "title": "Understanding JavaScript Closures",
-    "content": "Closures allow functions to retain access to variables even after execution.",
-    "userId": 2,
-    "categoryId": 3,
-    "created_at": "2024-02-03T10:15:00.000Z",
-    "updated_at": "2024-02-03T10:15:00.000Z",
-    "user": { "id": 2, "username": "jane_smith", "email": "jane@example.com" },
-    "category": { "id": 3, "category_name": "Artificial Intelligence" }
-  },
-  {
-    "id": 4,
-    "title": "Node.js Performance Optimization Tips",
-    "content": "Learn how to speed up your Node.js applications with caching and clustering.",
-    "userId": 3,
-    "categoryId": 3,
-    "created_at": "2024-02-02T08:45:00.000Z",
-    "updated_at": "2024-02-02T08:45:00.000Z",
-    "user": { "id": 3, "username": "alice_brown", "email": "alice@example.com" },
-    "category": { "id": 3, "category_name": "Artificial Intelligence" }
-  },
-  {
-    "id": 5,
-    "title": "Mastering Sequelize for Database Management",
-    "content": "Sequelize simplifies working with databases in Node.js.",
-    "userId": 4,
-    "categoryId": 4,
-    "created_at": "2024-02-01T14:30:00.000Z",
-    "updated_at": "2024-02-01T14:30:00.000Z",
-    "user": { "id": 4, "username": "bob_white", "email": "bob@example.com" },
-    "category": { "id": 4, "category_name": "Data Base" }
-  },
-  {
-    "id": 6,
-    "title": "Async/Await in JavaScript Explained",
-    "content": "Understanding asynchronous JavaScript using async/await.",
-    "userId": 5,
-    "categoryId": 5,
-    "created_at": "2024-01-30T09:00:00.000Z",
-    "updated_at": "2024-01-30T09:00:00.000Z",
-    "user": { "id": 5, "username": "charlie_green", "email": "charlie@example.com" },
-    "category": { "id": 5, "category_name": "Programming Languages" }
-  },
-  {
-    "id": 7,
-    "title": "Introduction to GraphQL",
-    "content": "GraphQL provides a flexible alternative to REST APIs.",
-    "userId": 6,
-    "categoryId": 5,
-    "created_at": "2024-01-29T17:00:00.000Z",
-    "updated_at": "2024-01-29T17:00:00.000Z",
-    "user": { "id": 6, "username": "dana_black", "email": "dana@example.com" },
-    "category": { "id": 5, "category_name": "Programming Languages" }
+    {
+    "title": "Exploring the Future of Quantum Computing",
+    "content": "Quantum computing is expected to revolutionize industries, enabling faster processing of data.",
+    "postedBy": "Alice Johnson",
+    "category_name": "Artificial Intelligence",
+    "createdOn": "2025-11-16 10:00:00"
   }
 ]
