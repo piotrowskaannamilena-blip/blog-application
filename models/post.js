@@ -2,6 +2,18 @@ const { Model, DataTypes } = require("sequelize");
 
 const sequelize = require("../config/connection");
 
+module.exports = (sequelize, DataTypes) => {
+  const Post = sequelize.define('Post', {
+    title: DataTypes.STRING,
+    content: DataTypes.TEXT
+  }, {
+    tableName: 'post', // Explicitly tell Sequelize to use the 'post' table
+    timestamps: true
+  });
+
+  return Post;
+};
+
 class Post extends Model {}
 
 Post.init(
