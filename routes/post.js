@@ -3,6 +3,7 @@ const { Post, Category, User } = require("../models");
 const { Op } = require("sequelize");
 
 
+// Get all posts
 router.get("/", async (req, res) => {
   try {
     const posts = await Post.findAll({
@@ -14,7 +15,7 @@ router.get("/", async (req, res) => {
     });
     res.json(posts);
   } catch (error) {
-    console.error("Error retrieving posts:", error); // 
+    console.error("Error retrieving posts:", error);
     res.status(500).json({ message: "Error retrieving posts", error: error.message });
   }
 });
@@ -22,25 +23,19 @@ router.get("/", async (req, res) => {
 // Add a new post
 router.post("/", async (req, res) => {
   try {
-    // Destructure data from request body
     const { title, content, user_id, category_id } = req.body;
 
-    // Validate required fields
     if (!title || !content || !user_id || !category_id) {
-      return res
-        .status(400)
-        .json({ message: "Title, content, user_id, and category_id are required" });
+      return res.status(400).json({ message: "Title, content, user_id, and category_id are required" });
     }
 
-    // Create new post using the correct variable names
     const newPost = await Post.create({
       title,
       content,
-      category_id, 
-      user_id      
+      user_id,
+      category_id,
     });
 
-    // Fetch the post along with its relations
     const postWithRelations = await Post.findByPk(newPost.id, {
       include: [
         { model: Category, as: "category" },
@@ -62,7 +57,12 @@ router.get("/search/:q?", async (req, res) => {
   try {
     const q = req.params.q || req.query.q || "";
     const posts = await Post.findAll({
-      where: { title: { [Op.like]: `%${q}%` } },
+      where: {
+        [Op.or]: [
+          { title: { [Op.like]: `%${q}%` } },
+          { content: { [Op.like]: `%${q}%` } }
+        ]
+      },
       include: [
         { model: Category, as: "category" },
         { model: User, as: "user", attributes: ["id", "username"] },
@@ -91,13 +91,13 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
 // Update post
 router.put("/:id", async (req, res) => {
   try {
-    const { title, content, categoryId } = req.body;
+    const { title, content, category_id } = req.body;
+
     const [updatedRows] = await Post.update(
-      { title, content, categoryId },
+      { title, content, category_id },
       { where: { id: req.params.id } }
     );
 

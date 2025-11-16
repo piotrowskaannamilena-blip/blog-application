@@ -2,21 +2,21 @@
   {
     "title": "My First Blog Post",
     "content": "This is the content of my first post.",
-    "postedBy": "John Doe", 
+    "user_id": "1", 
     "category_name": "Artificial Intelligence",
     "createdOn": "2025-11-15 23:00:48"
   },
   {
     "title": "The Rise of AI in Web Development",
     "content": "AI is transforming how we build websites, making development faster and smarter.",
-    "postedBy": "Jane Smith", 
+    "user_id": "2", 
     "category_name": "Programming Languages",
     "createdOn": "2025-11-15 23:00:48"
   },
     {
     "title": "Exploring the Future of Quantum Computing",
     "content": "Quantum computing is expected to revolutionize industries, enabling faster processing of data.",
-    "postedBy": "Alice Johnson",
+    "user_id": "3",
     "category_name": "Artificial Intelligence",
     "createdOn": "2025-11-16 10:00:00"
   }

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "username": "John Doe",
+    "email": "john@example.com",
+    "password": "hashedPassword123",
+    "created_at": "2025-11-15T14:32:00.000Z",
+    "updated_at": "2025-11-15T14:32:00.000Z"
+  },
+  {
+    "id": 2,
+    "username": "Jane Smith",
+    "email": "jane@example.com",
+    "password": "password456",
+    "created_at": "2025-11-15T14:32:00.000Z",
+    "updated_at": "2025-11-15T14:32:00.000Z"
+  },
+  {    
+    "id": 3,
+    "username": "Joe",
+    "email": "joe@example.com",
+    "password": "anna",
+    "created_at": "2025-11-15T14:32:00.000Z",
+    "updated_at": "2025-11-15T14:32:00.000Z"
+  }
+]
