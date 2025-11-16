@@ -3,8 +3,6 @@
 
 https://www.youtube.com/watch?v=5ZFt7HDl3-Y
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/5ZFt7HDl3-Y?si=dJUm_6aFQjMBIt4l" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
 
 Directory and folder structure 
 
