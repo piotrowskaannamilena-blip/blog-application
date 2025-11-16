@@ -57,6 +57,7 @@ npm install
 7. **Seed the database with test data:**
 
 ```bash
+npm install sequelize mysql2
 npm run seed
 ```
 
