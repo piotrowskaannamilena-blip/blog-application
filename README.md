@@ -1,5 +1,9 @@
 # blog-application Full Stack Tech Blog Application
 
+
+https://www.youtube.com/watch?v=5ZFt7HDl3-Y
+
+
 Directory and folder structure 
 
 <img width="133" height="677" alt="image" src="https://github.com/user-attachments/assets/85e1ee1c-cc13-4669-b2a0-635fcec69488" />
