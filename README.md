@@ -54,6 +54,12 @@ Clone repository onto your own disc folder
 ``bash
 git clone https://github.com/piotrowskaannamilena-blip/blog-application
 
+-Copy the environment example variables file as .env in same folder as the project you cloned repository0
+
+```bash
+cp .env.example .env
+
+
 ```bash
 npm install
 ```
