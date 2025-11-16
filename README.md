@@ -4,7 +4,7 @@ Directory and folder structure
 
 <img width="133" height="677" alt="image" src="https://github.com/user-attachments/assets/85e1ee1c-cc13-4669-b2a0-635fcec69488" />
 
-Logged is and registered layout:
+Login and registered layout:
 <img width="1822" height="1828" alt="Screenshot 2025-11-15 211836" src="https://github.com/user-attachments/assets/c248071b-f898-4995-aeef-b5b4150780a4" />
 
 
