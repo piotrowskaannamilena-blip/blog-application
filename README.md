@@ -1,7 +1,10 @@
 # blog-application Full Stack Tech Blog Application
 
-
+With mistakes - 1st version:
 https://www.youtube.com/watch?v=5ZFt7HDl3-Y
+
+Working version: bug fixing and debugging 
+[https://www.youtube.com/watch?v=5vtH4hJGjdk](https://www.youtube.com/watch?v=5vtH4hJGjdk)
 
 
 Directory and folder structure 
