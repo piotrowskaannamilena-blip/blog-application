@@ -2,12 +2,14 @@
 const Post = require("./post");
 const Category = require("./category");
 const User = require("./user");
+//hooks true - ON DELETE CASCADE works in Postgres
 
 // Relationship, user has many posts
 User.hasMany(Post, {
   foreignKey: "user_id",
   as: "posts",
   onDelete: "CASCADE",
+  hooks: true,
 });
 
 // post belong to user
@@ -20,9 +22,10 @@ Post.belongsTo(User, {
 Category.hasMany(Post, {
   foreignKey: "category_id",
   as: "posts",
-  onDelete: "SET NULL"
-});
-
+  onDelete: "SET NULL", 
+  hooks: true,
+}); 
+ 
 // post belongs to category
 Post.belongsTo(Category, {
   foreignKey: "category_id",

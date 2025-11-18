@@ -1,47 +1,49 @@
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
 
-const isProduction = process.env.NODE_ENV === "production";
-
 let sequelize;
 
-if (isProduction) {
-  // Production on Render using DATABASE_URL with Postgres
+  //When the app is deployed, it will have access to Render's 
+  // DB_URL variable and use that value to connect. Otherwise, it will continue using the localhost configuration
+
+if (process.env.DATABASE_URL) {
+  // Production on Render
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: "postgres",
-    protocol: "postgres",
+    logging: console.log,
     dialectOptions: {
       ssl: {
         require: true,
-         // Needed for Render PostgreSQL SSL
         rejectUnauthorized: false,
       },
     },
-    // Disable logging in production
-    logging: false,
   });
-
-  console.log("Connected to external Render PostgreSQL database.");
-
+  console.log("Using Render Postgres DB (production).");
 } else {
-  // Local development 
+  // Local development
+
+  //This makes the app use the value of the PORT variable provided in the Render environment variables
   sequelize = new Sequelize(
-    process.env.DB_DATABASE,
-    process.env.DB_USERNAME,
-    process.env.DB_PASSWORD,
+    process.env.DB_DATABASE || "posts_db",
+    process.env.DB_USERNAME || "postgres",
+    process.env.DB_PASSWORD || "password",
     {
-      host: process.env.DB_HOST,
-      dialect: process.env.DB_DIALECT || "mysql", 
-      port: process.env.DB_PORT,
-      // Logging locally for debugging
+      host: process.env.DB_HOST || "localhost",
+      dialect: process.env.DB_DIALECT || "postgres", 
+      port: process.env.DB_PORT || 5432,
       logging: console.log,
     }
   );
-  console.log("Connected to local database.");
+  console.log("Using local database (development).");
 }
 
-module.exports = sequelize;
+// Test connection
+sequelize
+  .authenticate()
+  .then(() => console.log("Database connected successfully!"))
+  .catch((err) => console.error("DB connection failed:", err));
 
+module.exports = sequelize;
 
 // require("dotenv").config();
 

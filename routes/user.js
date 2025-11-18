@@ -72,13 +72,13 @@ router.post("/login", async (req, res) => {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(400).json({ message: "Incorrect password" });
 
-    const token = signToken(user);  // <-- FIXED: now creating token
+    const token = signToken(user);  // FIXED: now creating token
 
     const { password: pw, ...safeUser } = user.get({ plain: true });
 
     res.json({
       message: "Login successful",
-      token,         // <-- FIXED: frontend needs this
+      token,         // FIXED: frontend needs this
       user: safeUser
     });
 

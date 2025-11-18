@@ -3,7 +3,7 @@ const router = require("express").Router();
 
 // import the models
 
-const { Category }= require('../models');
+const { Category }= require('../models/index');
 
 // Router to add a new cat post
 router.post("/", async (req, res) => {
@@ -58,7 +58,6 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ message: "Error updating category", error });
   }
 });
-
 // Route to delete a category
 router.delete("/:id", async (req, res) => {
   try {

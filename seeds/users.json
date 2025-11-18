@@ -1,26 +1,38 @@
 [
   {
-    "id": 1,
     "username": "John Doe",
     "email": "john@example.com",
-    "password": "hashedPassword123",
-    "created_at": "2025-11-15T14:32:00.000Z",
-    "updated_at": "2025-11-15T14:32:00.000Z"
+    "password": "1234"
   },
   {
-    "id": 2,
     "username": "Jane Smith",
     "email": "jane@example.com",
-    "password": "password456",
-    "created_at": "2025-11-15T14:32:00.000Z",
-    "updated_at": "2025-11-15T14:32:00.000Z"
+    "password": "password456"
   },
-  {    
-    "id": 3,
+  {
     "username": "Joe",
     "email": "joe@example.com",
-    "password": "anna",
-    "created_at": "2025-11-15T14:32:00.000Z",
-    "updated_at": "2025-11-15T14:32:00.000Z"
+    "password": "anna"
+  },
+  {
+    "username": "Mike Johnson",
+    "email": "mike@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "Emily Williams",
+    "email": "emily@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "David Brown",
+    "email": "david@example.com",
+    "password": "password123"
+  },
+  {
+    "username": "Sophia Miller",
+    "email": "sophia@example.com",
+    "password": "password123"
   }
+
 ]

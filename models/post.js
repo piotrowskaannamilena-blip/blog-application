@@ -1,18 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
-
 const sequelize = require("../config/connection");
-
-module.exports = (sequelize, DataTypes) => {
-  const Post = sequelize.define('Post', {
-    title: DataTypes.STRING,
-    content: DataTypes.TEXT
-  }, {
-    tableName: 'post', // Explicitly tell Sequelize to use the 'post' table
-    timestamps: true
-  });
-
-  return Post;
-};
 
 class Post extends Model {}
 
@@ -22,45 +9,49 @@ Post.init(
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-    },
+    }, 
+
     title: {
       type: DataTypes.STRING,
       allowNull: false,
     },
+
     content: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: false, 
     },
-    // Foreign key to User
+
+    // Foreign key user
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "user", // Must match tableName in User model
+        model: "user",
         key: "id",
       },
-      onDelete: "CASCADE",
+      onDelete: "CASCADE", 
     },
-    // Foreign key to Category
+
+    // Foreign key category
     category_id: {
       type: DataTypes.INTEGER,
-      allowNull: true, // Optional if post can exist without category
+      allowNull: true,
       references: {
         model: "category",
         key: "id",
       },
       onDelete: "SET NULL",
+
     },
   },
   
   {
     sequelize,
+    modelName: "post",          // important
+    freezeTableName: true,      // table name = "post"
+    underscored: true,          // created_at, updated_at
     timestamps: true,
-    freezeTableName: true,
-    underscored: true,
-    modelName: "post",
   }
 );
 
-// Export Post model
 module.exports = Post;

@@ -1,69 +1,87 @@
-let token = localStorage.getItem("authToken");
+// error I had, what I was talking about, so it was stored as global :( hence why something didn't work
+// let token = localStorage.getItem("authToken"); at the top, 
+// but inside functions like createPost, logout, etc., you re-read the token from localStorage
 
-// Attach functions to window for HTML access when page loads
+
+// API BASE URL
+// If running on localhost, use local API, otherwise, assume deployed backend on render
+const API_URL = (() => {
+    const hostname = window.location.hostname;
+
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+        // Local backend running on port 3001
+        console.log("Server running at http://localhost:3001");
+        return "http://localhost:3001/api";
+    } else {
+        // Deployed Render URL
+        console.log("Running on production, using Render backend.");
+        return "https://blog-application-9q6n.onrender.com/api";
+    }
+})();
+
+
+// Functions accessible from HTML
 window.register = register;
 window.login = login;
 window.logout = logout;
-//window.createPost = createPost;
+window.createPost = createPost;
 window.fetchPosts = fetchPosts;
 window.filterPosts = filterPosts;
 window.searchPosts = searchPosts;
 
 
+// DOM content loading
 document.addEventListener("DOMContentLoaded", () => {
-  // Initial UI setup pn page loading
-  updateUI();
-  loadCategoriesSidebar();
-  loadCategories();
-
-  const registerForm = document.getElementById("register-form");
-  const loginForm = document.getElementById("login-form");
-  const showLoginBtn = document.getElementById("show-login-btn");
-  const showRegisterBtn = document.getElementById("show-register-btn");
-
-  // Show login form
-  showLoginBtn?.addEventListener("click", () => {
-      loginForm.classList.remove("hidden");
-      registerForm.classList.add("hidden");
-  });
-
-  // Show register form
-  showRegisterBtn?.addEventListener("click", () => {
-      registerForm.classList.remove("hidden");
-      loginForm.classList.add("hidden");
-  });
-
-
+    // Initial UI setup pn page loading
+    updateUI();           // Update UI based on login state
+    loadCategoriesSidebar(); // Populate sidebar categories
+    loadCategories();        // Populate dropdown for post creation
+    setupFormToggles();
+    fetchPosts();
 });
 
-    // Updated front end
+// Fixing hidden and not hidden as I got it mixed up everywhere, so adding as a function to use on DOM load 
+// clean version
+function setupFormToggles() {
+  // Show login form 
+    document.getElementById("show-login-btn")?.addEventListener("click", () => {
+        document.getElementById("login-form").classList.remove("hidden");
+        document.getElementById("register-form").classList.add("hidden");
+    });
+  // Show register form
+    document.getElementById("show-register-btn")?.addEventListener("click", () => {
+        document.getElementById("register-form").classList.remove("hidden");
+        document.getElementById("login-form").classList.add("hidden");
+    });
+}
+
+    // Updates front end
 function updateUI() {
     const token = localStorage.getItem("authToken");
+    const isLoggedIn = !!token;
 
-    const authContainer = document.getElementById("auth-container");
-    const createPostContainer = document.getElementById("create-post-container");
-    const registerForm = document.getElementById("register-form");
-    const loginForm = document.getElementById("login-form");
-
-    if (token) {
-        // User is logged in
-        authContainer.classList.add("hidden");
-        createPostContainer.classList.remove("hidden");
-        registerForm.classList.add("hidden");
-        loginForm.classList.add("hidden");
-    } else {
-        // User is not logged in
-        authContainer.classList.remove("hidden");
-        createPostContainer.classList.add("hidden");
-
-        // Show register form by default
-        registerForm.classList.remove("hidden");
-        loginForm.classList.add("hidden");
+    // Auth container hidden when logged in
+    document.getElementById("auth-container")?.classList.toggle("hidden", isLoggedIn);
+    if (!isLoggedIn) {
+        document.getElementById("register-form").classList.remove("hidden");
+        document.getElementById("login-form").classList.add("hidden");
     }
-};
+     
+    // Create post visible only when logged in
+    document.getElementById("create-post-container").classList.toggle("hidden", !isLoggedIn);
+    // Logout button visible only when logged in
+    document.getElementById("user-actions").classList.toggle("hidden", !isLoggedIn);
 
+}
 
-// Register function for user
+// Function format date 
+function dateFormat(dateString) {
+    if (!dateString) return "Unknown date";
+    const d = new Date(dateString);
+    return isNaN(d) ? "Unknown date" : d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+}
+
+// Register function
 function register() {
     const username = document.getElementById("username").value.trim();
     const email = document.getElementById("email").value.trim();
@@ -73,152 +91,127 @@ function register() {
         return alert("Please fill in all fields");
     }
 
-    fetch("http://localhost:3001/api/users", {
+    fetch(`${API_URL}/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
     })
     .then(res => res.json())
     .then(data => {
-        if (data.errors && Array.isArray(data.errors)) {
-            alert(data.errors.map(e => e.message).join("\n"));
-        } else if (data.error) {
-            alert(data.error);
-        } else if (data.token) {
-            // Auto-login after registration
+        if (data.errors) return alert(data.errors.map(e => e.message).join("\n"));
+        if (data.error) return alert(data.error);
+
+        if (data.token) {
             localStorage.setItem("authToken", data.token);
-            token = data.token;
+            alert("Registration successful!");
             updateUI();
-            alert("Registration successful! You are now logged in.");
-        } else {
-            alert(data.message || "Registration successful. Please log in.");
         }
+
+        // Hide forms once logged in
+        document.getElementById("register-form").classList.add("hidden");
+        document.getElementById("login-form").classList.add("hidden");
     })
-    .catch(err => {
-        console.error("Registration error:", err);
-        alert("Failed to register. Check console for details.");
-    });
+    .catch(err => console.error("Registration error:", err));
 }
 
-// Login function for user
+
+// USER LOGIN
+
 function login() {
     const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value.trim();
 
     if (!email || !password) return alert("Please enter email and password");
 
-    fetch("http://localhost:3001/api/users/login", {
+    fetch(`${API_URL}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
     })
     .then(res => res.json())
     .then(data => {
-        if (data.token) {
-            localStorage.setItem("authToken", data.token);
-            token = data.token;
-            updateUI();
-            alert("Logged in successfully!");
-        } else {
-            alert(data.message || "Login failed");
-        }
+        if (!data.token) return alert(data.message || "Login failed");
+
+        localStorage.setItem("authToken", data.token);
+        alert("Logged in successfully!");
+        updateUI();
+
+        // Hide forms
+        document.getElementById("register-form").classList.add("hidden");
+        document.getElementById("login-form").classList.add("hidden");
     })
-    .catch(err => {
-        console.error("Login error:", err);
-        alert("Login failed. Check console for details.");
-    });
+    .catch(err => console.error("Login error:", err));
 }
+
 
 // Logout
 function logout() {
+    const token = localStorage.getItem("authToken");
     if (!token) return;
 
-    fetch("http://localhost:3001/api/users/logout", {
+    fetch(`${API_URL}/users/logout`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
-    })
-    .finally(() => {
-        // Remove token from local storage
+    }).finally(() => {
+        // Remove token locally
         localStorage.removeItem("authToken");
-        token = null;
-        updateUI();
         alert("Logged out successfully");
+        updateUI();
     });
 }
 
-// Function for date formatting
-  function formatDate(date) {
-    const formattedDate = new Date(date);
-    return !isNaN(formattedDate) ? formattedDate.toLocaleString() : "Unknown date";
+// // Function for date format
+// function dateFormat(dateString) {
+//     if (!dateString) return "Unknown date";
+
+//     const date = new Date(dateString);
+//     if (isNaN(date)) return "Unknown date";
+
+//     const options = { year: 'numeric', month: 'long', day: 'numeric' };
+//     return date.toLocaleDateString(undefined, options); // e.g., "1 February 2024"
+// }
+
+// Load Fetch posts 
+function fetchPosts() {
+    fetch(`${API_URL}/posts`)
+        .then(res => res.json())
+        .then(posts => renderPosts(posts))
+        .catch(err => console.error("Error fetching posts:", err));
 }
 
-// Load posts 
-function fetchPosts() {
-  fetch("http://localhost:3001/api/posts")
-    .then(res => res.json())
-    .then(posts => {
-      console.log("Posts data:", posts);  // Debug this output
+// Filter posts by category name (for sidebar)
+function filterPosts(categoryName) {
+    fetch(`${API_URL}/posts`)
+        .then(res => res.json())
+        .then(posts => {
+            if (categoryName && categoryName !== "All") {
+                posts = posts.filter(post =>
+                    post.category?.category_name === categoryName
+                );
+            }
+            renderPosts(posts);
+        })
+        .catch(err => console.error("Error fetching posts:", err));
+}
 
-      const container = document.getElementById("posts");
-      container.innerHTML = "";  // Clear the posts container before adding new posts
 
-      if (!Array.isArray(posts)) {
-        console.error("Posts data is not an array:", posts);
-        return;
-      }
-
-      if (posts.length === 0) {
-        container.innerHTML = "<p>No posts available.</p>";
-        return;
-      }
-
-      posts.forEach(post => {
-        let dateText = "Unknown date";
-        if (post.createdAt) {
-          const date = new Date(post.createdAt);
-          if (!isNaN(date)) {
-            dateText = date.toLocaleString(); 
-          }
-        }
-
-        const div = document.createElement("div");
-        div.classList.add("post");
-
-        div.innerHTML = `
-          <h3>${post.title}</h3>
-          <p>${post.content}</p>
-          <small>
-            By: ${post.user?.username || post.postedBy || "Unknown"} 
-            in category: ${post.category?.category_name || post.category_name || "General"}
-            on ${dateText}
-          </small>
-        `;
-        container.appendChild(div);
-      });
-    })
-    .catch(err => console.error("Error fetching posts:", err));
-  }
-  
 // Create post only for logged in users
 function createPost() {
-  const title = document.getElementById("post-title").value.trim();
-  const content = document.getElementById("post-content").value.trim();
-  const categoryId = parseInt(document.getElementById("category-dropdown").value);
+    const token = localStorage.getItem("authToken");
+    if (!token) return alert("You must be logged in to create a post");
+    
+    const title = document.getElementById("post-title").value.trim();
+    const content = document.getElementById("post-content").value.trim();
+    const categoryId = parseInt(document.getElementById("category-dropdown").value);
 
   if (!title || !content || !categoryId) {
     return alert("Please fill in all fields");
   }
-
-  // User login details (token)
-  const token = localStorage.getItem("authToken");
-  if (!token) return alert("You must be logged in to create a post");
-
+  // user login details
   const decodedToken = jwt_decode(token);
-  const userId = decodedToken.data?.id; // Ensure .data.id exists
+  const userId = decodedToken?.data?.id; // Ensure .data.id exists
 
-  if (!userId) return alert("Invalid user session. Please log in again.");
-
-  fetch("http://localhost:3001/api/posts", {
+  fetch(`${API_URL}/posts`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -227,8 +220,8 @@ function createPost() {
     body: JSON.stringify({
       title,
       content,
-      category_id: categoryId,  // Ensure this is passed to the backend
-      user_id: userId           // Ensure this is passed to the backend
+      category_id: categoryId,  
+      user_id: userId           
     }),
   })
     .then(res => res.json())
@@ -242,7 +235,7 @@ function createPost() {
       document.getElementById("post-title").value = "";
       document.getElementById("post-content").value = "";
       document.getElementById("category-dropdown").value = "";
-      fetchPosts(); // Reload posts after creation
+      fetchPosts();
     })
     .catch(err => {
       console.error("Network error creating post:", err);
@@ -252,10 +245,9 @@ function createPost() {
 
 // Function to load categories on frontend as dropdown
 function loadCategories() {
-  fetch("http://localhost:3001/api/categories")
+  fetch(`${API_URL}/categories`)
     .then(res => res.json())
     .then(categories => {
-      console.log(categories)
       const dropdown = document.getElementById("category-dropdown");
       dropdown.innerHTML = '<option value="">Select a category</option>';
 
@@ -277,7 +269,7 @@ function loadCategories() {
 
 // Function for sidebar to load categories
 function loadCategoriesSidebar() {
-  fetch("http://localhost:3001/api/categories")
+  fetch(`${API_URL}/categories`)
     .then(res => res.json())
     .then(categories => {
       const sidebar = document.getElementById("categories-list");
@@ -308,7 +300,7 @@ function loadCategoriesSidebar() {
 
 // Function for sidebar to filter categories by name
 function filterByCategory(categoryId) {
-  fetch(`http://localhost:3001/api/posts?category_id=${categoryId}`)
+  fetch(`${API_URL}/posts?category_id=${categoryId}`)
     .then(res => res.json())
     .then(posts => {
       const container = document.getElementById("posts");
@@ -337,9 +329,9 @@ function filterByCategory(categoryId) {
     .catch(err => console.error("Error fetching posts by category:", err));
 }
 
-// Filter Posts by category name - for sidebar
+// Filter Posts by category - for sidebar
 function filterPosts(categoryName) {
-  fetch("http://localhost:3001/api/posts")
+  fetch(`${API_URL}/posts`)
     .then(res => res.json())
     .then(posts => {
       const container = document.getElementById("posts");
@@ -347,15 +339,9 @@ function filterPosts(categoryName) {
 
       // If categoryName is provided, filter posts
       if (categoryName) {
-        posts = posts.filter(post => 
+        posts = posts.filter(post =>
           post.category?.category_name === categoryName
         );
-      }
-
-      // Check for posts and display them
-      if (posts.length === 0) {
-        container.innerHTML = "<p>No posts found for this category.</p>";
-        return;
       }
 
       posts.forEach(post => {
@@ -366,52 +352,8 @@ function filterPosts(categoryName) {
           <p>${post.content}</p>
           <small>
             By: ${post.user?.username || post.postedBy || "Unknown"} 
-            in category: ${post.category?.category_name || "General"}
-            on ${formatDate(post.createdAt)} 
-          </small>
-        `;
-        container.appendChild(div);
-      });
-    })
-    .catch(err => console.error("Error fetching posts by category:", err));
-}
-// Search post - searchbar
-function searchPosts() {
-  const query = document.getElementById("search-input").value.toLowerCase();
-
-  fetch("http://localhost:3001/api/posts")
-    .then(res => res.json())
-    .then(posts => {
-      const container = document.getElementById("posts");
-      container.innerHTML = "";
-
-      if (!Array.isArray(posts)) {
-        console.error("Posts data is not an array:", posts);
-        return;
-      }
-
-      // Filter posts based on title or content
-      const filteredPosts = posts.filter(post => {
-        const title = post.title.toLowerCase();
-        const content = post.content.toLowerCase();
-        return title.includes(query) || content.includes(query);
-      });
-
-      if (filteredPosts.length === 0) {
-        container.innerHTML = "<p>No posts found.</p>";
-        return;
-      }
-
-      filteredPosts.forEach(post => {
-        const div = document.createElement("div");
-        div.classList.add("post");
-        div.innerHTML = `
-          <h3>${post.title}</h3>
-          <p>${post.content}</p>
-          <small>
-            By: ${post.user?.username || post.postedBy || "Unknown"} 
-            in category: ${post.category?.category_name || "General"}
-            on ${formatDate(post.createdAt)} 
+            in category: ${post.category?.category_name || post.category_name || "General"}
+            on  ${dateFormat(post.createdAt)}
           </small>
         `;
         container.appendChild(div);
@@ -420,4 +362,47 @@ function searchPosts() {
     .catch(err => console.error("Error fetching posts:", err));
 }
 
+// Search post - searchbar
+function searchPosts() {
+    const query = document.getElementById("search-input").value.toLowerCase();
+
+    fetch(`${API_URL}/posts`)
+        .then(res => res.json())
+        .then(posts => {
+            const filtered = posts.filter(post => {
+                const title = post.title?.toLowerCase() || "";
+                const content = post.content?.toLowerCase() || "";
+                return title.includes(query) || content.includes(query);
+            });
+            renderPosts(filtered);
+        })
+        .catch(err => console.error("Error fetching posts:", err));
+}
+
+function renderPosts(posts) {
+    const container = document.getElementById("posts");
+    container.innerHTML = "";
+
+    if (!Array.isArray(posts) || posts.length === 0) {
+        container.innerHTML = "<p>No posts found.</p>";
+        return;
+    }
+
+    posts.forEach(post => {
+        const div = document.createElement("div");
+        div.classList.add("post");
+        div.innerHTML = `
+            <h3>${post.title}</h3>
+            <p>${post.content}</p>
+            <small>
+                By: ${post.user?.username || post.postedBy || "Unknown"} 
+                in category: ${post.category?.category_name || post.category_name || "General"}
+                on ${dateFormat(post.createdAt)}
+            </small>
+        `;
+        container.appendChild(div);
+    });
+}
+
+updateUI();
 fetchPosts();

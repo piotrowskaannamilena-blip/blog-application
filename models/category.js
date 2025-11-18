@@ -8,6 +8,7 @@ Category.init(
   {
     id: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       primaryKey: true,
       autoIncrement: true,
     },
@@ -15,6 +16,7 @@ Category.init(
     category_name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
   },
 
@@ -24,8 +26,8 @@ Category.init(
     freezeTableName: true,
     timestamps: true, 
     underscored: true,
-
   }
 );
+ 
 // Export Post model
 module.exports = Category;

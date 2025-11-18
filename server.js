@@ -1,10 +1,10 @@
 //Load env first
-require("dotenv").config(); 
+require("dotenv").config();
 
 
 // Import required packages
 const express = require("express");
-const bodyParser = require("body-parser");
+//no need for body parser
 const path = require("path");
 
 // Database sequelize
@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 3001;
 // has the --rebuild parameter been passed as a command line param? used for seeding
 const rebuild = process.argv[2] === "--rebuild";
 
-//Middleware
+// Middleware - Parse incoming data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -43,17 +43,17 @@ app.use("/api/users", userRoutes);
  // category filter
 app.use("/api/categories", categoryRoutes);
 
-// Database connection
+// Database connection ! and server start
 sequelize.authenticate()
   .then(() => console.log("DB connected successfully!"))
   .catch(err => console.error("DB connection failed:", err));
 
-// Sync database
+  // Sync database
 sequelize.sync({ force: rebuild }).then(async () => {
 
     if (rebuild) {
       console.log("Rebuilding database & seeding data...");
-      await require("./seed/seed")();   // <- your seed file
+      await require("./seeds/seed")();   // <!!! this was missing your seed file is in seeds/seed
     }
 
     app.listen(PORT, () => {

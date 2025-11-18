@@ -2,7 +2,6 @@ const router = require("express").Router();
 const { Post, Category, User } = require("../models");
 const { Op } = require("sequelize");
 
-
 // Get all posts
 router.get("/", async (req, res) => {
   try {
@@ -15,27 +14,34 @@ router.get("/", async (req, res) => {
     });
     res.json(posts);
   } catch (error) {
-    console.error("Error retrieving posts:", error);
+    console.error("Error retrieving posts:", error); // 
     res.status(500).json({ message: "Error retrieving posts", error: error.message });
   }
 });
 
 // Add a new post
+// Add a new post
 router.post("/", async (req, res) => {
   try {
+    // Destructure data from request body
     const { title, content, user_id, category_id } = req.body;
 
+    // Validate required fields
     if (!title || !content || !user_id || !category_id) {
-      return res.status(400).json({ message: "Title, content, user_id, and category_id are required" });
+      return res
+        .status(400)
+        .json({ message: "Title, content, user_id, and category_id are required" });
     }
 
+    // Create new post using the correct variable names
     const newPost = await Post.create({
       title,
       content,
-      user_id,
-      category_id,
+      category_id, 
+      user_id      
     });
 
+    // Fetch the post along with its relations
     const postWithRelations = await Post.findByPk(newPost.id, {
       include: [
         { model: Category, as: "category" },
@@ -50,19 +56,13 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 // search functionality works via /api/posts/search?q=keyword
 // Search posts
 router.get("/search/:q?", async (req, res) => {
   try {
     const q = req.params.q || req.query.q || "";
     const posts = await Post.findAll({
-      where: {
-        [Op.or]: [
-          { title: { [Op.like]: `%${q}%` } },
-          { content: { [Op.like]: `%${q}%` } }
-        ]
-      },
+      where: { title: { [Op.like]: `%${q}%` } },
       include: [
         { model: Category, as: "category" },
         { model: User, as: "user", attributes: ["id", "username"] },
@@ -95,7 +95,6 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { title, content, category_id } = req.body;
-
     const [updatedRows] = await Post.update(
       { title, content, category_id },
       { where: { id: req.params.id } }
