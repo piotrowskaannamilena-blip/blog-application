@@ -15,35 +15,27 @@ body {
 
 /* Header */
 header {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 30px;
-    color: #ffffff;
-    background: linear-gradient(135deg, #6a0dad, #4b0082);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     display: flex;
     align-items: center;
     gap: 15px;
-    justify-content: center;  
-    position: relative;
 }
 
 header span {
+    font-size: 2.2rem;
     flex-grow: 1;
     text-align: center;
 }
 
 #logo {
-    height: 50px;
+    height: 120px;
+    width: auto;
     transition: 0.4s ease;
-    filter: grayscale(0);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
 }
 
 #logo:hover {
-    filter: hue-rotate(25deg) brightness(1.2);
-    transform: scale(1.1);
+ transform: scale(1.1);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
 }
 
 /* Search bar */
